@@ -94,6 +94,13 @@ public class PersonBuilder {
         return this;
     }
 
+    /**
+     * Sets the {@link seedu.address.model.person.Remark} of the {@code Person}
+     * being built. Pass an empty string to clear the remark.
+     *
+     * @param remark the remark text to set (must not be {@code null})
+     * @return this builder for chaining
+     */
     public PersonBuilder withRemark(String remark) {
         this.remark = new Remark(remark);
         return this;
