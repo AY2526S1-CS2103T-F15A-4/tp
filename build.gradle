@@ -18,6 +18,10 @@ repositories {
 
 checkstyle {
     toolVersion = '11.0.0'
+    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    configProperties = [
+            'suppressions.file': rootProject.file('config/checkstyle/suppressions.xml').absolutePath
+    ]
 }
 
 test {
