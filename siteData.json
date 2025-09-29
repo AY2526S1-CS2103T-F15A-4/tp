@@ -11,6 +11,7 @@
         "jane-doe": "Jane Doe",
         "johnny-doe": "Johnny Doe",
         "yun-qi": "Yun Qi",
+        "heng-jia-yuan": "Heng Jia Yuan",
         "kimberlee-soo": "Kimberlee Soo"
       },
       "headingKeywords": {}
@@ -132,6 +133,14 @@
       "title": "",
       "headings": {
         "addressbook-level-3": "AddressBook Level-3"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "team/jiayuan.md",
+      "title": "John Doe's Project Portfolio Page",
+      "headings": {
+        "project-addressbook-level-3": "Project: AddressBook Level 3"
       },
       "headingKeywords": {}
     },
