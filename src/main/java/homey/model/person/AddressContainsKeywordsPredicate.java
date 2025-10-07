@@ -13,7 +13,6 @@ import java.util.function.Predicate;
 public class AddressContainsKeywordsPredicate implements Predicate<Person> {
 
     private final List<String> keywordsLowerCased;
-    
 /**
      * Constructs a predicate that returns {@code true} if a person's address contains
      * any of the provided {@code keywords}, ignoring case.
