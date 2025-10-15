@@ -115,6 +115,7 @@
         "adding-a-person-add": "Adding a person: add",
         "listing-all-persons-list": "Listing all persons : list",
         "editing-a-person-edit": "Editing a person : edit",
+        "add-relational-tag-relation": "Add relational tag : relation",
         "locating-persons-by-name-find": "Locating persons by name: find",
         "locating-persons-by-address-find-a": "Locating persons by address: find a/",
         "locating-persons-by-tag-find-t": "Locating persons by tag: find t/",
