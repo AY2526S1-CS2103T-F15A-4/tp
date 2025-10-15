@@ -116,6 +116,7 @@
         "listing-all-persons-list": "Listing all persons : list",
         "editing-a-person-edit": "Editing a person : edit",
         "add-relational-tag-relation": "Add relational tag : relation",
+        "changing-the-transaction-stage": "Changing the transaction stage",
         "locating-persons-by-name-find": "Locating persons by name: find",
         "locating-persons-by-address-find-a": "Locating persons by address: find a/",
         "locating-persons-by-tag-find-t": "Locating persons by tag: find t/",
