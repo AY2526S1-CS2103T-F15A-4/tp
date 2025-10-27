@@ -3,11 +3,15 @@ package homey.logic.parser;
 import static homey.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static homey.logic.Messages.MESSAGE_SINGLE_KEYWORD_ONLY;
 import static homey.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static homey.logic.parser.CliSyntax.PREFIX_MEETING;
 import static homey.logic.parser.CliSyntax.PREFIX_RELATION;
 import static homey.logic.parser.CliSyntax.PREFIX_TAG;
 import static homey.logic.parser.CliSyntax.PREFIX_TRANSACTION;
 import static java.util.Objects.requireNonNull;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +19,7 @@ import java.util.Set;
 import homey.logic.commands.FindCommand;
 import homey.logic.parser.exceptions.ParseException;
 import homey.model.person.AddressContainsKeywordsPredicate;
+import homey.model.person.MeetingContainsDatePredicate;
 import homey.model.person.NameContainsKeywordsPredicate;
 import homey.model.person.RelationContainsKeywordPredicate;
 import homey.model.person.TagContainsKeywordsPredicate;
@@ -30,6 +35,7 @@ import homey.model.person.TransactionContainsKeywordPredicate;
  *   <li>Tag search: {@code find t/KEYWORD [MORE_KEYWORDS]}</li>
  *   <li>Relation search: {@code find r/KEYWORD}</li>
  *   <li>Transaction Stage search: {@code find s/KEYWORD}</li>
+ *   <li>Meeting search: {@code find m/DATE}</li>
  * </ul>
  *
  * <p>When {@code a/} is provided without any keywords (e.g., {@code find a/}, {@code find t/}),
@@ -45,11 +51,16 @@ public class FindCommandParser implements Parser<FindCommand> {
     private static final String TRANSACTION_ERROR_MESSAGE =
             "Invalid transaction stage. Only 'prospect' or 'negotiating' or 'closed' are allowed";
 
+    private static final String MEETING_ERROR_MESSAGE =
+            "Invalid date. Date must be in yyyy-MM-dd format";
+
+
     private static final Set<String> VALID_PREFIXES = Set.of(
             PREFIX_ADDRESS.toString(),
             PREFIX_TAG.toString(),
             PREFIX_RELATION.toString(),
-            PREFIX_TRANSACTION.toString()
+            PREFIX_TRANSACTION.toString(),
+            PREFIX_MEETING.toString()
     );
 
 
@@ -76,6 +87,11 @@ public class FindCommandParser implements Parser<FindCommand> {
         if (trimmedArgs.startsWith(PREFIX_TRANSACTION.toString())) {
             String afterPrefix = extractAfterPrefix(trimmedArgs, PREFIX_TRANSACTION.toString());
             return parseTransaction(afterPrefix);
+        }
+
+        if (trimmedArgs.startsWith(PREFIX_MEETING.toString())) {
+            String afterPrefix = extractAfterPrefix(trimmedArgs, PREFIX_MEETING.toString());
+            return parseMeeting(afterPrefix);
         }
 
         return parseName(trimmedArgs);
@@ -109,6 +125,13 @@ public class FindCommandParser implements Parser<FindCommand> {
         return "Relation: " + FindCommand.COMMAND_WORD + " " + PREFIX_RELATION + "KEYWORD";
     }
 
+    /**
+     * Builds the meeting-only usage string for {@code find m/DATE}
+     */
+    private static String buildMeetingOnlyUsage() {
+        return "Meeting: " + FindCommand.COMMAND_WORD + " " + PREFIX_MEETING + "DATE";
+    }
+
     private FindCommand parseAddress(String args) throws ParseException {
         validateNotEmpty(args, buildAddressOnlyUsage());
         List<String> keywords = extractKeywords(args);
@@ -139,6 +162,13 @@ public class FindCommandParser implements Parser<FindCommand> {
         validateNotEmpty(args, FindCommand.MESSAGE_USAGE);
         List<String> keywords = extractKeywords(args);
         return new FindCommand(new NameContainsKeywordsPredicate(keywords));
+    }
+
+    private FindCommand parseMeeting(String args) throws ParseException {
+        validateNotEmpty(args, FindCommand.MESSAGE_USAGE);
+        String date = extractSingleKeyword(args, "Meeting", buildMeetingOnlyUsage());
+        validateMeetingDate(date);
+        return new FindCommand(new MeetingContainsDatePredicate(date));
     }
 
     private String validateAndTrim(String args) throws ParseException {
@@ -174,6 +204,16 @@ public class FindCommandParser implements Parser<FindCommand> {
     private void validateTransactionKeyword(String keyword) throws ParseException {
         if (!VALID_TRANSACTIONS.contains(keyword)) {
             throw new ParseException(TRANSACTION_ERROR_MESSAGE);
+        }
+    }
+
+    private void validateMeetingDate(String date) throws ParseException {
+        requireNonNull(date);
+        String s = date.trim();
+        try {
+            LocalDate.parse(s, DateTimeFormatter.ISO_DATE);
+        } catch (DateTimeParseException ex) {
+            throw new ParseException(MEETING_ERROR_MESSAGE);
         }
     }
 
