@@ -18,6 +18,7 @@ public class Relation {
      */
     public Relation(String value) {
         requireNonNull(value);
+        value = value.trim().toLowerCase();
         checkArgument(isValidRelation(value), MESSAGE_CONSTRAINTS);
         this.value = value;
     }
@@ -26,6 +27,7 @@ public class Relation {
      * Returns true if a given string is a valid relation.
      */
     public static boolean isValidRelation(String test) {
+        test = test.trim().toLowerCase();
         return test.equals("client") || test.equals("vendor");
     }
 
