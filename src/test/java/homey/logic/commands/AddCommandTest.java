@@ -60,6 +60,16 @@ public class AddCommandTest {
     }
 
     @Test
+    public void execute_personAlreadyArchived_throwsCommandException() {
+        Person archivedPerson = new PersonBuilder().withName("Alice Tan").build().archived();
+        AddCommand addCommand = new AddCommand(new PersonBuilder(archivedPerson).build());
+        Model modelStub = new ModelStubWithArchivedDuplicate(archivedPerson);
+
+        assertThrows(CommandException.class,
+                Messages.MESSAGE_DUPLICATE_IN_ARCHIVED, () -> addCommand.execute(modelStub));
+    }
+
+    @Test
     public void execute_duplicatePerson_throwsCommandException() {
         Person validPerson = new PersonBuilder().build();
         AddCommand addCommand = new AddCommand(validPerson);
@@ -212,6 +222,11 @@ public class AddCommandTest {
                 this.person.getMeeting().get().updateOverdueStatus();
             }
         }
+
+        @Override
+        public ReadOnlyAddressBook getAddressBook() {
+            return new AddressBook(); // empty is fine for this test
+        }
     }
 
     /**
@@ -247,4 +262,27 @@ public class AddCommandTest {
         }
     }
 
+    private class ModelStubWithArchivedDuplicate extends ModelStub {
+        private final Person archived;
+
+        ModelStubWithArchivedDuplicate(Person archived) {
+            this.archived = archived;
+        }
+
+        @Override
+        public ReadOnlyAddressBook getAddressBook() {
+            AddressBook ab = new AddressBook();
+            ab.addPerson(archived);
+            return ab;
+        }
+
+        @Override
+        public boolean hasPerson(Person p) {
+            return false;
+        } // not in active list
+        @Override
+        public void addPerson(Person p) {
+            throw new AssertionError("Should not add");
+        }
+    }
 }
