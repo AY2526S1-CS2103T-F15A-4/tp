@@ -70,6 +70,22 @@ public class AddCommandTest {
     }
 
     @Test
+    public void execute_duplicateInArchived_throwsCommandException() {
+        // archived version of an existing person
+        Person archivedPerson = new PersonBuilder().withName("Alice Tan").build().archived();
+        Person samePerson = new PersonBuilder(archivedPerson).build(); // identical fields
+
+        // ModelStub that simulates an archived duplicate
+        Model modelStub = new ModelStubWithArchivedDuplicate(archivedPerson);
+
+        AddCommand addCommand = new AddCommand(samePerson);
+
+        // Expect CommandException for duplicate in archived
+        assertThrows(CommandException.class,
+                Messages.MESSAGE_DUPLICATE_IN_ARCHIVED, () -> addCommand.execute(modelStub));
+    }
+
+    @Test
     public void execute_duplicatePerson_throwsCommandException() {
         Person validPerson = new PersonBuilder().build();
         AddCommand addCommand = new AddCommand(validPerson);
