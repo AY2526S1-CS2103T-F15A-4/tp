@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
@@ -83,6 +84,24 @@ public class AddCommandTest {
         // Expect CommandException for duplicate in archived
         assertThrows(CommandException.class,
                 Messages.MESSAGE_DUPLICATE_IN_ARCHIVED, () -> addCommand.execute(modelStub));
+    }
+
+    @Test
+    public void execute_duplicateInArchivedInteractiveMode_addsInteractiveHint() {
+        // archived duplicate already present
+        Person archived = new PersonBuilder().withName("Alice Tan").build().archived();
+        // same person (not archived) being added
+        Person toAdd = new PersonBuilder(archived).build();
+
+        Model modelStub = new ModelStubWithArchivedDuplicate(archived);
+
+        // interactive = true, and no missing fields -> we enter the same block,
+        // but message should include the interactive hint.
+        AddCommand interactiveCmd = new AddCommand(toAdd, true, new HashMap<>());
+
+        assertThrows(CommandException.class,
+                Messages.MESSAGE_DUPLICATE_IN_ARCHIVED + "\n"
+                        + InteractiveCommand.MESSAGE_INTERACTIVE, () -> interactiveCmd.execute(modelStub));
     }
 
     @Test
