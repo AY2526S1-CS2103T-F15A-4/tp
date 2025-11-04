@@ -136,9 +136,7 @@ Additional parsers added for this feature:
 
 #### Interactive Command Support
 
-The Logic component has been enhanced to support interactive commands that can prompt users for missing information. This is implemented through the following components:
-
-<puml src="diagrams/InteractiveLogicClassDiagram.puml" width="550"/>
+The Logic component has been enhanced to support interactive commands that can prompt users for missing information.
 
 How interactive commands work:
 
@@ -688,33 +686,13 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
     Use case ends.
 
-**Use case: Get reminded of meetings and appointments when they are approaching**
-
-**MSS**
-
-1. User opens application
-2. Systems displays upcoming meetings at top of application page in a message bar upon startup
-
-    Use case ends.
-
-**Use case: Set reminders linked to specific contacts**
-
-**MSS**
-
-1. User searches for a certain contact
-2. System displays details associated with contact
-3. User adds reminder to contact using command line
-4. System displays success message and reminder details
-
-    Use case ends.
-
-**Use case: Add date and time for meetings**
+**Use case: Add dates for meetings**
 
 **MSS**
 
 1. User opens the application.
 2. User adds a contact with a meeting date and time.
-3. System validates the meeting input format (`YYYY-MM-DD HH:mm`).
+3. System validates the meeting input format (`yyyy-MM-dd HH:mm`).
 4. System updates the contact with the new meeting date and time.
 5. System displays a success message confirming the scheduled meeting.
 
@@ -770,13 +748,13 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
    Use case ends.
 
-**Use case: Tag each client with their property location**
+**Use case: Attach each client with their property location**
 
 **MSS**
 
 1. User lists all contacts or searches for client
 2. System retrieves and displays list of contacts
-3. User inputs command for tagging client location based on displayed index
+3. User inputs command for attaching client location based on displayed index
 4. System displays success message and location details
 
     Use case ends.
@@ -801,22 +779,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 1b. No contacts match the selected type.
     * 1b1. System shows “No contacts found.”
-
-**Use case: Link a meeting to multiple contacts**
-
-**MSS**
-
-1. User opens application
-2. User views contact list and selects contact
-3. User requests to set a meeting for this contact
-4. System prompts for meeting details
-5. User enters meeting details, including other contacts involved
-6. System validates meeting details and validates other contacts exist
-7. System adds meeting details to the original contact
-8. System adds meeting details for all specified attendees
-9. System displays success message listing all contacts updated with the meeting
-
-   Use case ends.
 
 **Extensions**
 
@@ -845,43 +807,16 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
    Use case ends.
 
-**Use case: Color code tags and events**
-
-**MSS**
-
-1. User views contact list or searches for a specific contact
-2. System retrieves and displays contacts with their current details
-3. User inputs command for tagging and specifies color
-4. System updates the contact with the specified tag and color
-5. System displays success message
-
-   Use case ends.
-
-**Use case: Highlight overdue tasks and meetings**
+**Use case: Highlight overdue meetings**
 
 **MSS**
 
 1. User opens application
-2. System scans all meetings and tasks for overdue items (past current date/time)
+2. System scans all meetings for overdue items (past current date/time)
 3. System displays overdue items highlighted at the top of the interface
 4. User views the highlighted overdue items with associated contact details
 
    Use case ends.
-
-**Use case: Sort contacts by latest meeting**
-
-**MSS**
-
-1. User opens application
-2. User selects “Sort by → Meeting date”
-3. System rearranges contacts by latest meeting date, with nearest meeting first
-
-   Use case ends.
-
-**Extensions**
-
-* 2a. No contacts in list.
-    * 2a1. System displays “Contact list empty.”
 
 **Use case: Search for client by typing name**
 
@@ -1000,7 +935,7 @@ Precondition: User has launched the app.
 **MSS**
 
 1. User opens app
-2. User selects “List All Contacts” option
+2. User selects "List All Contacts" option
 3. System retrieves all saved contacts
 4. System displays the full list of contact entries
 5. User scrolls or navigates through the displayed list
@@ -1073,14 +1008,9 @@ Precondition: User has launched the app.
 **Extensions**
 
 * **6a.** User enters an invalid meeting format.
-    * 6a1. System displays an error message with the correct format (e.g., “YYYY-MM-DD HH:mm”).
+    * 6a1. System displays an error message with the correct format (e.g., “yyyy-MM-dd HH:mm”).
     * 6a2. User re-enters the meeting details.
         * Use case resumes at step 7.
-
-* **7a.** User attempts to edit a meeting while specifying other fields (e.g., `s/closed`).
-    * 7a1. System displays error: “When editing a meeting, no other fields may be provided.”
-    * 7a2. User corrects the input or cancels the operation.
-        * Use case resumes at step 5 or ends.
 
 * **8a.** User tries to clear a meeting that does not exist.
     * 8a1. System displays message: “No meetings to clear for [contact name].”
@@ -1395,19 +1325,13 @@ This happens because the name validation rejects these characters, and in the ca
 We plan to relax the name validation rules and refine the command parser to correctly handle such names. For example, the command `add n/"Muhammad s/o Rahman" p/91234567 e/m.rahman@example.com` will successfully add the contact instead of producing an invalid command error.
 
 
-2. **Allow names to be wrapped in the contact summary:**
-Currently, when users add contacts with very long names, the contact summary does not wrap the name and instead truncates it with an ellipsis (...) when there is insufficient space.
-This makes it difficult for users to identify contacts with similar long names.
-We plan to enhance the UI layout so that long names automatically wrap onto the next line instead of being truncated, ensuring the full name remains visible in the contact summary.
-
-
-3. **Allow multiple contacts with identical names to be added correctly:**  
+2. **Allow multiple contacts with identical names to be added correctly:**  
 Currently, Homey prevents users from adding a new contact if another contact with the same name already exists. This restriction forces users to artificially modify names (e.g., “John Tan 1”, “John Tan 2”) to differentiate between different clients or vendors, which reduces data clarity and makes the contact list less natural to use.
 We plan to relax this restriction by identifying contacts internally using unique identifiers instead of relying on the name field for equality checks. This will involve modifying the duplicate detection logic in the `AddCommand` and `AddressBook` classes to compare contacts based on their unique IDs rather than their names.
 For example, users will be able to add both “John Tan” (buyer) and “John Tan” (vendor) as separate contacts without encountering a duplicate contact error.
 
 
-4. **Allow multiple phone numbers and email addresses for a single contact:**  
+3. **Allow multiple phone numbers and email addresses for a single contact:**  
 Currently, each contact in Homey can only store one phone number and one email address. This limits flexibility, as many clients or vendors may have multiple contact channels (e.g., personal and work numbers, or separate emails for correspondence and billing).
 We plan to enhance Homey’s contact model to support multiple phone numbers and email addresses per contact. This will involve updating the `Person` class to store lists of phone numbers and email addresses, modifying the `add` and `edit` command parsers to accept multiple entries, and adjusting the UI and storage components to display and save them correctly.
 For example, users will be able to add a contact such as:  
@@ -1415,7 +1339,7 @@ For example, users will be able to add a contact such as:
 to store both numbers and emails under a single contact.
 
 
-5. **Prevent total data loss on startup due to a single invalid field:**  
+4. **Prevent total data loss on startup due to a single invalid field:**  
 Currently, when Homey starts up and encounters a single invalid field (e.g., a corrupted phone number or improperly formatted date) in the saved data file, the entire address book fails to load. This results in complete data loss until the user manually fixes or deletes the corrupted file.
 We plan to improve the data loading mechanism to perform **partial recovery** instead of rejecting the entire dataset.
 Specifically, Homey will:
@@ -1426,7 +1350,7 @@ Specifically, Homey will:
    This ensures that users do not lose all their saved contacts due to one malformed entry and improves overall data resilience.
 
 
-6. **Make error message for `relation` more specific:**
+5. **Make error message for `relation` more specific:**
 Currently, the error message for `relation` is:
 `Invalid command format!
 relation: Edits relation tag of the person identified by the index number used in the last person listing. Existing relation tag will be overwritten.
@@ -1438,7 +1362,7 @@ Parameters: INDEX (must be a positive integer) [client/vendor]
 Example: relation 1 client`.
 
 
-7. **Make error message for `remark` more specific:**
+6. **Make error message for `remark` more specific:**
 Currently, the error message for `remark` is:
 `Invalid command format! 
 remark: Edits the remark of the person identified by the index number used in the last person listing.
@@ -1450,7 +1374,7 @@ Parameters: INDEX (must be a positive integer) rm/[REMARK] (must not be more tha
 Example: remark 1 rm/Prefers properties in the East.`.
 
 
-8. **Make error message for `transaction` more specific:**
+7. **Make error message for `transaction` more specific:**
 Currently, the error message for `transaction` is:
 `Invalid command format! 
 transaction: Edits the transaction stage of the person identified by the index number used in the last person listing. Existing transaction stage will be overwritten by the input.
@@ -1461,5 +1385,13 @@ We plan to make the error message more targeted by reducing the message content 
 Parameters: INDEX (must be a positive integer) s/ TRANSACTION STAGE
 Example: transaction 1 s/prospect`.
 
+
+8. **Make “no results” message for find a/ more specific:**
+Currently, when a user searches for an address using find a/ and there are no matching contacts, Homey displays a generic message:
+`0 persons listed!`
+This message does not clearly indicate that the search was performed using the address field, which may confuse users who expect address-specific feedback.
+We plan to make the message more targeted by updating it to:
+`No contacts found in the specified area.`
+This enhancement improves clarity and user experience by providing context-aware feedback that directly reflects the user’s search intent when using `find a/`.
 --------------------------------------------------------------------------------------------------------------------
 
