@@ -1133,7 +1133,12 @@ testers are expected to do more *exploratory* testing.
 
 ### Viewing Help
 
-
+1. Test case: `help offline`  
+   Expected: Opens a Help window displaying a summary of commands users can use.
+2. Test case: `help add`  
+   Expected: Opens the User Guide in the browser directly to the "Adding a contact" section.
+3. Test case: `help`  
+   Expected: Opens the User Guide's homepage.
 
 ### Interactive add
 
@@ -1272,6 +1277,18 @@ testers are expected to do more *exploratory* testing.
    Expected: Error “This person is not archived.”
 4. Test case: `unarchive 0`, `unarchive x`  
    Expected: Invalid index error.
+
+### Viewing a contact
+
+1. Prerequisites: Ensure at least 1 contact exists and no more than 98 contacts (for test at point 4).
+2. Test case: `view 1`
+   Expected: Contact details of the first person in the list (be it active or archive list) is opened on the right panel.
+3. Test case: `view -1`
+   Expected: Error: "Invalid index: index must be a positive integer (starting from 1).
+   view: Displays contact information of person at given index
+   Format: view INDEX"
+4. Test case: `view 99`
+   Error: "The person index provided is invalid"
 
 --------------------------------------------------------------------------------------------------------------------
 
