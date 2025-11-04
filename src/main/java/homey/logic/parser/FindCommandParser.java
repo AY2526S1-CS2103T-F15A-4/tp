@@ -48,9 +48,11 @@ public class FindCommandParser implements Parser<FindCommand> {
     private static final String TRANSACTION_ERROR_MESSAGE =
             "Invalid transaction stage. Only 'prospect' or 'negotiating' or 'closed' are allowed";
     private static final String TAG_ERROR_MESSAGE =
-            "Invalid keyword. Tags can only contain alphanumeric characters";
+            "Invalid tag. Tags should only contain alphanumeric characters and should not be blank";
     private static final String MULTIPLE_PREFIX_ERROR_MESSAGE = "Cannot search with multiple prefixes. "
             + "Use only one of: name (no prefix), a/, t/, r/, or s/";
+    private static final String NAME_ERROR_MESSAGE =
+            "Invalid name. Names should only contain alphanumeric characters and spaces, and it should not be blank";
 
     private static final Set<String> VALID_PREFIXES = Set.of(
             PREFIX_ADDRESS.toString(),
@@ -154,6 +156,9 @@ public class FindCommandParser implements Parser<FindCommand> {
     private FindCommand parseName(String args) throws ParseException {
         validateNotEmpty(args, FindCommand.MESSAGE_USAGE);
         List<String> keywords = extractKeywords(args);
+        for (String keyword : keywords) {
+            validateNameKeyword(keyword);
+        }
         return new FindCommand(new NameContainsKeywordsPredicate(keywords));
     }
 
@@ -198,6 +203,14 @@ public class FindCommandParser implements Parser<FindCommand> {
         validateNoDuplicatePrefixes(argMultimap);
     }
 
+    private void validateNameKeyword(String keyword) throws ParseException {
+        if (!keyword.matches("[A-Za-z0-9 ]+")) {
+            throw new ParseException(NAME_ERROR_MESSAGE);
+        }
+        if (keyword.trim().isEmpty()) {
+            throw new ParseException(NAME_ERROR_MESSAGE);
+        }
+    }
 
     private void validateNotEmpty(String args, String usage) throws ParseException {
         if (args.isEmpty()) {
@@ -219,6 +232,9 @@ public class FindCommandParser implements Parser<FindCommand> {
 
     private void validateTagKeyword(String keyword) throws ParseException {
         if (!keyword.matches("[A-Za-z0-9]+")) {
+            throw new ParseException(TAG_ERROR_MESSAGE);
+        }
+        if (keyword.trim().isEmpty()) {
             throw new ParseException(TAG_ERROR_MESSAGE);
         }
     }
