@@ -52,7 +52,7 @@ public class FindCommandParser implements Parser<FindCommand> {
     private static final String MULTIPLE_PREFIX_ERROR_MESSAGE = "Cannot search with multiple prefixes. "
             + "Use only one of: name (no prefix), a/, t/, r/, or s/";
     private static final String NAME_ERROR_MESSAGE =
-            "Invalid name. Names should only contain alphanumeric characters and spaces, and it should not be blank";
+            "Invalid name. Names should only contain alphanumeric characters and spaces.";
 
     private static final Set<String> VALID_PREFIXES = Set.of(
             PREFIX_ADDRESS.toString(),
@@ -205,9 +205,6 @@ public class FindCommandParser implements Parser<FindCommand> {
 
     private void validateNameKeyword(String keyword) throws ParseException {
         if (!keyword.matches("[A-Za-z0-9 ]+")) {
-            throw new ParseException(NAME_ERROR_MESSAGE);
-        }
-        if (keyword.trim().isEmpty()) {
             throw new ParseException(NAME_ERROR_MESSAGE);
         }
     }
