@@ -48,7 +48,7 @@ public class FindCommandParser implements Parser<FindCommand> {
     private static final String TRANSACTION_ERROR_MESSAGE =
             "Invalid transaction stage. Only 'prospect' or 'negotiating' or 'closed' are allowed";
     private static final String TAG_ERROR_MESSAGE =
-            "Invalid tag. Tags should only contain alphanumeric characters and should not be blank";
+            "Invalid tag. Tags should only contain alphanumeric characters";
     private static final String MULTIPLE_PREFIX_ERROR_MESSAGE = "Cannot search with multiple prefixes. "
             + "Use only one of: name (no prefix), a/, t/, r/, or s/";
     private static final String NAME_ERROR_MESSAGE =
