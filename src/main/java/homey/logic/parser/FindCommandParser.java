@@ -231,9 +231,6 @@ public class FindCommandParser implements Parser<FindCommand> {
         if (!keyword.matches("[A-Za-z0-9]+")) {
             throw new ParseException(TAG_ERROR_MESSAGE);
         }
-        if (keyword.trim().isEmpty()) {
-            throw new ParseException(TAG_ERROR_MESSAGE);
-        }
     }
 
     private String extractAfterPrefix(String trimmedArgs, String prefix) {
