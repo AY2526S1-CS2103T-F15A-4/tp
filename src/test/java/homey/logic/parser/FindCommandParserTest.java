@@ -132,7 +132,7 @@ public class FindCommandParserTest {
     @Test
     public void parse_tagKeywordWithNonAlphanumericCharacters_throwsParseException() {
         assertParseFailure(parser, "t/friend_buyer",
-                String.format("Invalid keyword. Tags can only contain alphanumeric characters"));
+                String.format("Invalid tag. Tags should only contain alphanumeric characters"));
     }
 
     @Test
